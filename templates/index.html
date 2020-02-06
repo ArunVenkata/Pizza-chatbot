@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat bot test</title>
-    <script type="text/javascript" src="{{ url_for("static", filename="js/jquery-3.1.0.min.js") }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.1.0.min.js') }}"></script>
     <style>
         @import url('https://fonts.googleapis.com/css?family=Raleway:300,400,500|Nunito&display=swap');
 
@@ -23,6 +24,53 @@
             flex-direction: column;
             height: 95%;
             background: linear-gradient(90deg, #667EEA 0%, #764BA2 100%);
+        }
+
+        @media screen
+        and (max-width: 640px) and (min-width: 320px) {
+            .chat-frame {
+                width: 100%;
+                height: 100%;
+            }
+
+            html, body {
+                width: 100%;
+            }
+
+            .message-inner {
+                max-width: calc(100% - 7em) !important;
+            }
+        }
+
+
+        @media screen
+        and (max-width: 1024px) and (min-width: 750px) {
+            .chat-frame {
+                width: 100%;
+                height: 100%;
+            }
+
+            .input-text-frame {
+                height: 7em !important;
+            }
+
+            .input-text {
+                width: calc(100% - 10em) !important;
+                height: 3em !important;
+                font-size: 1.475em;
+            }
+
+            button.send {
+                width: calc(100% - (100% - 7em));
+            }
+
+            html, body {
+                width: 100%;
+            }
+
+            .message-inner {
+                max-width: calc(100% - 7em) !important;
+            }
         }
 
         .app-bar {
@@ -257,11 +305,10 @@
             margin: 0;
             background: #0000001F;
             text-align: center;
-        {#background: #ffffff;#} border: .05em solid #a0a0a0;
-            border-left-width: 0;
 
+            border: .05em solid #a0a0a0;
+            border-left-width: 0;
             border-radius: 0 1em 1em 0;
-        {#box-shadow: .1em 0 0.4em 0.1em #A0A0A0;#}
         }
 
         .qty-minus {
@@ -270,10 +317,10 @@
             margin: 0;
             background: #0000001F;
             text-align: center;
-        {#background: #ffffff;#} border: .05em solid #a0a0a0;
+            border: .05em solid #a0a0a0;
             border-right-width: 0;
             border-radius: 1em 0 0 1em;
-        {#box-shadow: -0.1em 0 0.4em 0.1em #A0A0A0;#}
+
         }
 
         .qty-plus:hover, .qty-minus:hover {
@@ -317,7 +364,7 @@
 <div class="chat-frame">
     <div class="app-bar">
         <div class="chat-image">
-            <img class="chat-icon" src="{{ url_for("static", filename="images/customer-service.svg") }}" alt="">
+            <img class="chat-icon" src="{{ url_for('static', filename='images/customer-service.svg') }}" alt="">
         </div>
         <p class="app-bar-text">YoYo Pizza</p>
     </div>
@@ -337,7 +384,6 @@
 
         if (options) {
             options.forEach(function (item) {
-                {#console.log(item);#}
                 opt_string += "<button class='opts' onclick='select_opt(this);'>" + item + "</button>\n"
             })
         }
@@ -488,7 +534,6 @@
         }
     });
     $("button.send").on("click", function (evt) {
-        {#console.log($(".input-text").val());#}
         let msg = $(".input-text").val();
         $(".input-text").val("");
         if (msg) {
@@ -514,7 +559,6 @@
                     appendMessage("Enter your full address");
                     states.address_enter = false;
                     states.phone_enter = true;
-                    {#states.name_enter = false;#}
                 }, 1300);
             }
             if (states.phone_enter) {
@@ -547,7 +591,6 @@
     });
 
     function select_opt(evt) {
-        {#console.log(evt, "Type");#}
         if (evt.innerHTML.toString().toLowerCase() === "order") {
             mcall({
                 contentType: "application/json;charset=UTF-8",
@@ -592,7 +635,6 @@
                     appendTable(response.data, d.crust_size);
             },
             error: function (response) {
-                {#alert("Error Occurred! " + response);#}
                 console.log(response);
                 appendMessage("Error Occurred. Try Again Later.")
             },

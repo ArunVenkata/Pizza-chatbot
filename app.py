@@ -135,5 +135,21 @@ def get_status():
     return jsonify({"result": "success", "data": data})
 
 
+@app.route("/clear_all_orders", methods=["POST"])
+def clear_orders():
+    data = request.get_json()
+    if not data.get("secret") == "@#$%^&*!&^@$":
+        return jsonify({"result": "error", "message": "invalid request"})
+    try:
+        conn = sql.connect("yoyo_pizza.db")
+        cur = conn.cursor()
+        cur.execute("delete from orders;")
+        conn.commit()
+        conn.close()
+    except Exception:
+        return jsonify({"result": "error", "message": "check logs"})
+    return jsonify({"result": "success", "message": "done"})
+
+
 if __name__ == '__main__':
     app.run(debug=True)
