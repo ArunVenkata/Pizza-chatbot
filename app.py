@@ -101,7 +101,7 @@ def create_bill():
 @app.route("/get_status", methods=["GET"])
 def get_status():
     args = request.args
-    order_id = args.get("order_id")
+    order_id = args.get("order_id", "").strip()
     if not order_id:
         return jsonify({"result": "error", "message": "Invalid Request"})
     conn = sql.connect("yoyo_pizza.db")
