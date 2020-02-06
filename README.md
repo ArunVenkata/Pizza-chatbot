@@ -16,3 +16,10 @@ Test Chatbot for pizza Delivery(Without nltk)
 ## How to use
  * On page, Click on order
  * Click on any size
+ * Add the required Pizza's
+ * Press "enter details" button
+ * Enter Requested Details and click "send"
+ * You will recieve Confirmation reply
+ * Click on "check Order Status"
+
+*Note: RELOADING THE PAGE WILL DELETE ALL MESSAGES(Order ID's will still be valid)*
