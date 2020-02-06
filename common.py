@@ -8,7 +8,7 @@ message_responses = {
               "options": ["Yes", "No"],
               "id": 2
               },
-    "Crust": {"messages": ["Choose your Crust:"],
+    "size": {"messages": ["Choose your size:"],
               "options": ["small", "medium", "large"]}
 }
 

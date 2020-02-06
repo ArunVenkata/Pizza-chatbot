@@ -596,14 +596,14 @@
                 contentType: "application/json;charset=UTF-8",
                 url: "/messages",
                 type: "POST",
-                data: {key: "crust", message: ""},
+                data: {key: "size", message: ""},
                 appendmessage: true
             });
         }
 
         if ($.inArray(evt.innerHTML.toString().toLowerCase(), ["small", "medium", "large"]) >= 0)
             mcall({
-                url: "/menu?crust_type=" + evt.innerHTML.toString().toLowerCase(),
+                url: "/menu?size_type=" + evt.innerHTML.toString().toLowerCase(),
                 type: "GET",
                 data: {},
                 appendtable: true,

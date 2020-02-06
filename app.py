@@ -22,9 +22,9 @@ def get_menu():
     if request.args.get("pizza_type"):
         filters.append("pizza_type = :pizza_type")
         variables["pizza_type"] = request.args.get("pizza_type")
-    if request.args.get("crust_type"):
+    if request.args.get("size_type"):
         filters.append("crust_type = :crust_type")
-        variables["crust_type"] = request.args.get("crust_type")
+        variables["crust_type"] = request.args.get("size_type")
     if request.args.get("pizza"):
         filters.append("pizza = :pizza")
         variables["pizza"] = request.args.get("pizza")
@@ -50,8 +50,8 @@ def messages():
         return {"result": "error", "message": "Invalid Request."}
     msg_data = {"messages": "I did not understand what you meant by that."}
     if not data.get("message"):
-        if data.get("key") == "crust":
-            msg_data = get_random_message("Crust")
+        if data.get("key") == "size":
+            msg_data = get_random_message("size")
         if data.get("key") == "":
             msg_data = get_random_message("Greetings")
     return jsonify({"result": "success", "data": msg_data}), 200
