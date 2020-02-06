@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat bot test</title>
+    <script type="text/javascript" src="{{ url_for("static", filename="js/jquery-3.1.0.min.js") }}"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Raleway:300,400,500|Nunito&display=swap');
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+        }
+
+        .chat-frame {
+            position: relative;
+            width: 25em;
+            display: flex;
+            flex-direction: column;
+            height: 95%;
+            background: linear-gradient(90deg, #667EEA 0%, #764BA2 100%);
+        }
+
+        .app-bar {
+            display: flex;
+            width: inherit;
+            height: 5em;
+            z-index: 1;
+            background: linear-gradient(90deg, #667EEA 0%, #764BA2 100%);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .chat-image {
+            display: flex;
+            width: 3.5em;
+            height: 3.5em;
+            background-color: #ffffff;
+            border-radius: 50%;
+            margin-left: 2em;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-icon {
+            width: calc(100% - .85em);
+            height: calc(100% - .85em);
+        }
+
+        .app-bar-text {
+            margin-left: 1em;
+            font-family: "Raleway", sans-serif;
+            font-size: 1.875em;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .input-text-frame {
+            display: flex;
+            position: absolute;
+            height: 4em;
+            bottom: 0;
+            flex-direction: row;
+            width: inherit;
+            background: #EDEDED;
+        }
+
+        .input-text {
+            height: 3em;
+            width: calc(100% - 10em);
+            align-self: center;
+            margin-left: 1.5em;
+            padding-left: 1em;
+            border: 0.01em solid #A0A0A0;
+            border-radius: .475em;
+        }
+
+        .ripple {
+            background-position: center;
+            transition: background 0.8s;
+        }
+
+        .ripple:hover {
+            background: #47a7f5 radial-gradient(circle, transparent 1%, #47a7f5 1%) center/15000%;
+        }
+
+        .ripple:active {
+            background-color: #6eb9f7;
+            background-size: 100%;
+            transition: background 0s;
+        }
+
+        .ripple-gray {
+            background-position: center;
+            transition: background 0.3s;
+        }
+
+        .ripple-gray:hover {
+            background: #b9b9b9 radial-gradient(circle, transparent 1%, #a0a0a0 1%) center/15000%;
+        }
+
+        .ripple-gray:active {
+            background-color: #b1b1b1;
+            background-size: 100%;
+            transition: background 0s;
+        }
+
+        button.send {
+            border: none;
+            border-radius: .125em;
+            font-size: 1.125em;
+            padding: 0 0.75em;
+            height: 50%;
+            margin-left: 1em;
+            font-family: "Raleway", sans-serif;
+            font-weight: 500;
+            align-self: center;
+            cursor: pointer;
+            color: white;
+            background-color: #2196f3;
+            box-shadow: 0 0 .25em #999;
+            outline: none;
+        }
+
+        button.details {
+            border: none;
+            border-radius: .125em;
+            font-size: .8em;
+            padding: 0 0.75em;
+            height: 2em;
+            font-family: "Raleway", sans-serif;
+            font-weight: 500;
+            align-self: center;
+            justify-self: flex-end;
+            cursor: pointer;
+            color: white;
+            background-color: #2196f3;
+            box-shadow: 0 0 .25em #999;
+            outline: none;
+
+        }
+
+        .messages-frame {
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            width: inherit;
+            bottom: 4em;
+            scroll-behavior: smooth;
+            top: 5em;
+            justify-content: end;
+            position: absolute;
+            background: transparent;
+            padding-bottom: 1em;
+        }
+
+        .message {
+            display: flex;
+            height: auto;
+            margin-top: 1em;
+            padding-left: .5em;
+            padding-right: .5em;
+        }
+
+        .right {
+            justify-content: flex-end;
+
+        }
+
+        .message-text {
+            margin: 0;
+            overflow-wrap: break-word;
+            line-height: 1.475em;
+            text-align: justify;
+            font-family: "Nunito", sans-serif;
+        }
+
+        .message-inner {
+            background: #ffffff;
+            height: auto;
+            border-radius: .375em;
+            width: auto;
+            max-width: calc(100% - 9em);
+            padding: .7em .7em;
+        }
+
+        .messages-frame::-webkit-scrollbar {
+            width: 1em;
+        }
+
+
+        .messages-frame::-webkit-scrollbar-thumb {
+            background-color: darkgrey;
+            outline: 0 solid slategrey;
+        }
+
+        .messages-frame::-webkit-scrollbar {
+            width: .5em;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button.opts {
+            text-align: center;
+            font-family: "Nunito", sans-serif;
+            height: 2em;
+            margin-top: .5em;
+            outline: none;
+            border: 0;
+            border-radius: .2em;
+            color: #47a7f5;
+            width: calc(100% - 2em);
+            background: transparent;
+        }
+
+        button.opts:hover {
+            color: #0004f5;
+        }
+
+        .opts:nth-child(1) {
+            margin-top: 1em;
+        }
+
+        /* code for qty*/
+        .qty-frame {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 1em;
+        }
+
+        .qty-input {
+            text-align: center;
+            width: 3em;
+            height: 1.25em;
+            border: .02em solid #a0a0a0;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .qty-plus {
+            width: 1.3em;
+            height: 1.275em;
+            margin: 0;
+            background: #0000001F;
+            text-align: center;
+        {#background: #ffffff;#} border: .05em solid #a0a0a0;
+            border-left-width: 0;
+
+            border-radius: 0 1em 1em 0;
+        {#box-shadow: .1em 0 0.4em 0.1em #A0A0A0;#}
+        }
+
+        .qty-minus {
+            width: 1.3em;
+            height: 1.275em;
+            margin: 0;
+            background: #0000001F;
+            text-align: center;
+        {#background: #ffffff;#} border: .05em solid #a0a0a0;
+            border-right-width: 0;
+            border-radius: 1em 0 0 1em;
+        {#box-shadow: -0.1em 0 0.4em 0.1em #A0A0A0;#}
+        }
+
+        .qty-plus:hover, .qty-minus:hover {
+            cursor: pointer;
+            user-select: none;
+            -ms-user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+        }
+
+        th {
+            font-family: "Raleway", serif;
+            font-weight: 500;
+            font-size: 1.175em;
+        }
+
+        td {
+            font-family: "Nunito", sans-serif;
+            text-align: center;
+            font-size: .875em;
+        }
+
+        .qty-input::-webkit-outer-spin-button,
+        .qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .total-frame {
+            display: flex;
+            margin: 1em;
+        }
+
+        .order-btn-frame {
+            height: inherit;
+            align-self: center;
+        }
+    </style>
+</head>
+<body>
+<div class="chat-frame">
+    <div class="app-bar">
+        <div class="chat-image">
+            <img class="chat-icon" src="{{ url_for("static", filename="images/customer-service.svg") }}" alt="">
+        </div>
+        <p class="app-bar-text">YoYo Pizza</p>
+    </div>
+    <div class="messages-frame">
+
+    </div>
+    <div class="input-text-frame">
+        <input type="text" placeholder="Type here..." class="input-text">
+        <button class="ripple send">Send</button>
+    </div>
+</div>
+<script type="text/javascript">
+    let message_id = 1;
+
+    function appendMessage(message, options, flow) {
+        let opt_string = "";
+
+        if (options) {
+            options.forEach(function (item) {
+                {#console.log(item);#}
+                opt_string += "<button class='opts' onclick='select_opt(this);'>" + item + "</button>\n"
+            })
+        }
+        if (flow === "right") {
+            $(".messages-frame").append("<div class=\"message right\">\n" +
+                "            <div class=\"message-inner\">\n" +
+                "                <p class=\"message-text\">" + message + "</p>\n" +
+                "<div class='options'>" + opt_string + " </div>" +
+                "            </div>" +
+                "        </div>"
+            )
+        } else {
+            $(".messages-frame").append("<div class=\"message\">\n" +
+                "            <div class=\"message-inner\">\n" +
+                "                <p class=\"message-text\">" + message + "</p>\n" +
+                "<div class='options'>" + opt_string + " </div>" +
+                "            </div>\n" +
+                "        </div>")
+        }
+        scroll_bottom()
+
+    }
+
+    let cost_data = {};
+    let states = {};
+    let checking_status = false;
+
+    function appendTable(arr, crust_size) {
+
+        $(".messages-frame").append(function () {
+            let t_rows = "";
+            for (let i = 0; i < arr.length; i++) {
+                let id = arr[i][0];
+                let name = arr[i][1];
+                let price = arr[i][2];
+                t_rows += "<tr>\n" +
+                    "<td id='pname" + id + "'>" + name + "</td>" +
+                    "<td id='pprice" + id + "'>" + price + "</td>" +
+                    "<td class=\"qty-frame\">" +
+                    "<span id='qty-minus" + id + "' class=\"qty-minus ripple-gray\">-</span>\n" +
+                    "<input id='qty-input" + id + "' class=\"qty-input\" value='0' type=\"number\" max=\"10\" min=\"0\">\n" +
+                    "<span id='qty-plus" + id + "' class=\"qty-plus ripple-gray\">+</span>" +
+                    "</td>" +
+                    "</tr>"
+            }
+            return "<div class=\"message\"><div class=\"message-inner\">" +
+                "<p class='message-text'>Here's our menu for " + crust_size + ":</p>" +
+                "<br><table>\n" +
+                "<tr>\n" +
+                "<th>Pizza</th>\n" +
+                "<th>Price</th>\n" +
+                "<th>Qty</th>\n" +
+                "</tr>\n" + t_rows + "</table>" +
+                "<hr>" +
+                "<div style='display: flex; flex-direction: row; justify-content: space-between;'>" +
+                "<div class='total-frame'>Total: &nbsp;<div class='total'>0</div></div>" +
+                "<div class='order-btn-frame'><button class='ripple details'>Enter Details</button></div></div>" +
+                "</div>\n" + "</div>";
+        });
+        $(".details").hide();
+        for (let i = 0; i < arr.length; i++) {
+            let id = arr[i][0];
+            $("#qty-plus" + id).on("click", function (evt) {
+                let value = Number.parseInt($("#qty-input" + id).val());
+                if (value < 10) {
+                    $("#qty-input" + id).val(value + 1);
+                    $("#qty-input" + id).trigger('change');
+                }
+
+            });
+            $("#qty-minus" + id).on("click", function (evt) {
+                let value = Number.parseInt($("#qty-input" + id).val());
+                if (value > 0) {
+                    $("#qty-input" + id).val(value - 1);
+                    $("#qty-input" + id).trigger('change');
+                }
+            });
+            $("#qty-input" + id).on("change", function (evt) {
+                let value = Number.parseFloat($("#qty-input" + id).val());
+                let cost = Number.parseFloat($("#pprice" + id).text());
+                console.log(cost * value, cost, evt);
+                cost_data[id] = [cost * value, value];
+                console.log(cost_data);
+                let sum = Object.values(cost_data).reduce(function add(accumulator, a) {
+                    return accumulator + a[0];
+                }, 0);
+                if (sum === 0) {
+                    $(".details").hide()
+                } else
+                    $(".details").show();
+                $(".total").text(sum);
+            });
+
+        }
+        $(".details").on("click", function (evt) {
+
+            $(this).hide();
+            $("tbody > tr").each(function (index, element) {
+                    if (index > 0) {
+                        index++;
+                        let input_val = $("tr:nth-child(" + index + ") > td.qty-frame > input").val();
+                        console.log("index is", index, "input val is ", input_val, "Remove tr:nth-child(" + index + ")");
+                        if (Number.parseInt(input_val) === 0)
+                            $("tr:nth-child(" + index + ")").empty();
+                        if (Number.parseInt(input_val) > 0) {
+                            $("tr:nth-child(" + index + ") > td.qty-frame").empty();
+                            $("tr:nth-child(" + index + ") > td.qty-frame").append("<p style='font-family: Nunito, sans-serif; width: 4em;'>" + input_val + "</p>");
+                        }
+                    }
+
+                }
+            );
+            appendMessage("Enter Your Name");
+            states.name_enter = true;
+        });
+        scroll_bottom()
+    }
+
+    function get_state_values() {
+        let state_values = [];
+        $.each(states, function (key, value) {
+            state_values.push(value)
+        });
+        return state_values
+    }
+
+    $(".input-text").on('keyup', function (e) {
+        if (e.keyCode === 13) {
+            let msg = $(".input-text").val();
+            if (msg.length > 0) {
+                if (checking_status === true || $.inArray(true, get_state_values()) !== -1) {
+                    $("button.send").trigger("click");
+                    return
+                }
+                appendMessage(msg, false, "right");
+                $(".input-text").val("");
+                setTimeout(function (e) {
+                    mcall({
+                        data: {message: msg, key: ""},
+                        type: "POST",
+                        url: "/messages",
+                        appendmessage: true,
+                        contentType: "application/json;charset=UTF-8"
+                    });
+                }, 1500);
+            }
+
+        }
+    });
+    $("button.send").on("click", function (evt) {
+        {#console.log($(".input-text").val());#}
+        let msg = $(".input-text").val();
+        $(".input-text").val("");
+        if (msg) {
+
+            appendMessage(msg, false, "right");
+
+
+            if (checking_status === true) {
+                mcall({
+                    url: "/get_status?order_id=" + msg,
+                    type: "GET",
+                    data: {},
+                    appendmessage: true
+                });
+                checking_status = false;
+            }
+            if (states.name_enter) {
+                states.name_enter = false;
+                states.address_enter = true;
+            }
+            if (states.address_enter) {
+                setTimeout(function (e) {
+                    appendMessage("Enter your full address");
+                    states.address_enter = false;
+                    states.phone_enter = true;
+                    {#states.name_enter = false;#}
+                }, 1300);
+            }
+            if (states.phone_enter) {
+                setTimeout(function (e) {
+                    appendMessage("Enter your Phone Number");
+
+                    states.phone_enter = false;
+                    $(".input-text").on("keydown", function (evt) {
+                        if (/[^\d]$/g.test(evt.target.value))
+                            evt.target.value = "";
+                    });
+                    states.done = true;
+                }, 1300);
+            }
+
+            if (states.done) {
+                $(".input-text").off("keydown");
+                mcall({
+                    url: "/create_bill",
+                    type: "POST",
+                    data: {purchases: cost_data},
+                    contentType: "application/json;charset=UTF-8",
+                    appendmessage: true
+                });
+                states.done = false
+
+            }
+        }
+
+    });
+
+    function select_opt(evt) {
+        {#console.log(evt, "Type");#}
+        if (evt.innerHTML.toString().toLowerCase() === "order") {
+            mcall({
+                contentType: "application/json;charset=UTF-8",
+                url: "/messages",
+                type: "POST",
+                data: {key: "crust", message: ""},
+                appendmessage: true
+            });
+        }
+
+        if ($.inArray(evt.innerHTML.toString().toLowerCase(), ["small", "medium", "large"]) >= 0)
+            mcall({
+                url: "/menu?crust_type=" + evt.innerHTML.toString().toLowerCase(),
+                type: "GET",
+                data: {},
+                appendtable: true,
+                crust_size: evt.innerHTML.toString().toLowerCase()
+            });
+        if (evt.innerHTML.toString().toLowerCase() === "check order status") {
+            appendMessage("Enter your Order ID");
+            checking_status = true;
+        }
+
+    }
+
+    function scroll_bottom() {
+        $('.messages-frame').animate({
+            scrollTop: document.querySelector(".messages-frame").scrollHeight,
+            behavior: "smooth"
+        }, 50);
+    }
+
+    function mcall(d) {
+        let _ajax_data = {
+            url: d.url,
+            type: d.type,
+            data: JSON.stringify(d.data),
+            success: function (response) {
+                if (d.appendmessage)
+                    appendMessage(response.data.messages, response.data.options);
+                if (d.appendtable)
+                    appendTable(response.data, d.crust_size);
+            },
+            error: function (response) {
+                {#alert("Error Occurred! " + response);#}
+                console.log(response);
+                appendMessage("Error Occurred. Try Again Later.")
+            },
+            timeout: 3000
+        };
+        let ctype = "";
+        if (Boolean(d.contentType)) {
+            ctype = d.contentType;
+            _ajax_data.contentType = ctype;
+        }
+        return $.ajax(_ajax_data);
+    }
+
+    $(document).ready(function (e) {
+        mcall({
+            data: {key: "", message: ""},
+            type: "POST",
+            url: "/messages",
+            appendmessage: true,
+            contentType: "application/json;charset=UTF-8"
+        });
+    });
+</script>
+</body>
+</html>
