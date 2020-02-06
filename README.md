@@ -7,3 +7,8 @@ Test Chatbot for pizza Delivery(Without nltk)
 ## How to run app
  * run command ```pip install -r requirements.txt```
  * run command ```python app.py```
+
+## App Architecture
+ * Python Backend
+ * HTML, CSS and JavaScript Frontend
+ * SQLite3 Database
