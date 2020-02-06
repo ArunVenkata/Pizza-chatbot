@@ -64,9 +64,9 @@ def create_bill():
     purchases = data.get("purchases", {})
     # query_data = [{"id_no": id_no, "cost_each": (value[0] // value[1])} for id_no, value in purchases.items()]
     # print(query_data)
-    cost_all = sum([value[0] // value[1] for value in purchases.values()])
-    total_qty = sum(value[1] for value in purchases.values())
-    cost_total = sum(value[0] for value in purchases.values())
+    cost_all = sum([value[0] // value[1] for value in purchases.values() if value[1] > 0])
+    total_qty = sum(value[1] for value in purchases.values() if value[1] > 0)
+    cost_total = sum(value[0] for value in purchases.values() if value[1] > 0)
     id_list = purchases.keys()
     query = f"""select sum(cost)==? from pizza_menu where id in ({','.join(['?'] * len(id_list))})"""
     conn = sql.connect("yoyo_pizza.db")
