@@ -4,6 +4,7 @@ import random as r
 import sqlite3 as sql
 import uuid
 import pendulum as p
+import os
 
 app = Flask(__name__)
 
@@ -138,7 +139,7 @@ def get_status():
 @app.route("/clear_all_orders", methods=["POST"])
 def clear_orders():
     data = request.get_json()
-    if not data.get("secret") == "@#$%^&*!&^@$":
+    if not data.get("secret") == os.environ["SECRET_KEY"]:
         return jsonify({"result": "error", "message": "invalid request"})
     try:
         conn = sql.connect("yoyo_pizza.db")
